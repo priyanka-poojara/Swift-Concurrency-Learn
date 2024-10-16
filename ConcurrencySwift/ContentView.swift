@@ -8,14 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @StateObject private var viewModel = ViewModel()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            
+            List(viewModel.todos, id: \.id) { todo in
+                VStack(alignment: .leading) {
+                    Text(todo.title)
+                        .font(.headline)
+                    Text("Completed: \(todo.completed ? "Yes" : "No")")
+                        .font(.subheadline)
+                }
+            }
+            .navigationTitle("Todos")
+            .task {
+                await viewModel.fetchTodo()
+            }
         }
-        .padding()
     }
 }
 

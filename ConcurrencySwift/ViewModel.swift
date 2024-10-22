@@ -5,7 +5,7 @@
 //  Created by Priyanka on 16/10/24.
 //
 
-import SwiftUI
+import Foundation
 
 class ViewModel: ObservableObject {
     @Published var todos: [UserData] = []
@@ -17,17 +17,13 @@ class ViewModel: ObservableObject {
         self.apiService = apiService
     }
     
+    @MainActor
     func fetchTodo() async {
         do {
             let todos: [UserData] = try await apiService.fetchData(from: "https://jsonplaceholder.typicode.com/todos")
-            
-            DispatchQueue.main.async {
-                self.todos = todos
-            }
+            self.todos = todos
         } catch {
-            DispatchQueue.main.async {
-                self.errorMessage = error.localizedDescription
-            }
+            self.errorMessage = error.localizedDescription
         }
         
     }

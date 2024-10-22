@@ -15,7 +15,7 @@ class APIManager: APIService {
     
     private let decoder: DataDecoder
     
-    init(decoder: DataDecoder = JSONDataDecoder()) {
+    init(decoder: DataDecoder = JSONDecoder()) {
         self.decoder = decoder
     }
     
@@ -30,42 +30,20 @@ class APIManager: APIService {
         
         return decodedData
     }
-    
-    
-//    func fetchData() async throws -> [UserData] {
-//        guard let url = URL(string: "https://jsonplaceholder.typicode.com/todos") else {
-//            throw URLError(.badURL)
-//        }
-//        
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "GET"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        
-//        let (data, _) = try await URLSession.shared.data(for: request)
-//        let decodedData = try JSONDecoder().decode([UserData].self, from: data)
-//        
-//        return decodedData
-//    }
-    
 }
 
 protocol DataDecoder {
     func decode<T: Decodable>(_ data: Data) throws -> T
 }
 
-class JSONDataDecoder: DataDecoder {
+extension JSONDecoder: DataDecoder {
     func decode<T: Decodable>(_ data: Data) throws -> T {
-        return try JSONDecoder().decode(T.self, from: data)
+        return try self.decode(T.self, from: data)
     }
 }
 
 struct UserData: Codable {
-    let userID, id: Int
+    let userId, id: Int
     let title: String
     let completed: Bool
-
-    enum CodingKeys: String, CodingKey {
-        case userID = "userId"
-        case id, title, completed
-    }
 }
